@@ -2,7 +2,8 @@
  *	read and print 24 lines then pause for a few special commands
  *      feature of version 0.2: reads from /dev/tty for commands
  */
-#include	<stdio.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #define	PAGELEN	24
 #define	LINELEN	512

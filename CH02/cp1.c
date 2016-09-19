@@ -6,13 +6,14 @@
 #include        <stdio.h>
 #include        <unistd.h>
 #include        <fcntl.h>
+#include        <stdlib.h>
 
 #define BUFFERSIZE      4096
 #define COPYMODE        0644
 
 void oops(char *, char *);
 
-main(int ac, char *av[])
+int main(int ac, char *av[])
 {
         int     in_fd, out_fd, n_chars;
         char    buf[BUFFERSIZE];
@@ -22,6 +23,8 @@ main(int ac, char *av[])
                 exit(1);
         }
 						/* open files	*/
+        if( strcmp(av[1], av[2]) == 0)
+                printf("cp : %s and %s are same file\n", av[1], av[2]);
 
         if ( (in_fd=open(av[1], O_RDONLY)) == -1 )
                 oops("Cannot open ", av[1]);

@@ -36,13 +36,17 @@ struct utmp *utmp_next()
     struct utmp *recp;
 
     if ( fd_utmp == -1 )                            /* error ?      */
-            return NULLUT;
+        return NULLUT;
     if ( cur_rec==num_recs && utmp_reload()==0 )    /* any more ?   */
         return NULLUT;
                                     /* get address of next record    */
     recp = ( struct utmp *) &utmpbuf[cur_rec * UTSIZE];
     cur_rec++;
-    return recp;
+
+    if(recp->ut_type == EMPTY)
+        return utmp_next();
+    else
+        return recp;
 }
 
 int utmp_reload()
@@ -60,6 +64,14 @@ int utmp_reload()
                                             /* reset pointer        */
     cur_rec  = 0;
     return num_recs;
+}
+
+int utmp_seek(int record_offset, int base){
+    record_offset = num_recs - (cur_rec + record_offset);
+    if(lseek(fd_utmp, record_offset * UTSIZE, base) != -1)
+        return 0;
+    else
+        return -1;
 }
 
 utmp_close()
@@ -83,7 +95,7 @@ int logout_tty(char *line)
     int retval = -1;
 
     if((fd = open(UTMP_FILE, O_RDWR)) == -1)
-            return -1;
+        return -1;
     while(read(fd, &rec, len) == len)
         if(strncmp(rec.ut_line, line, sizeof(rec.ut_line)) == 0)
             rec.ut_type = DEAD_PROCESS;

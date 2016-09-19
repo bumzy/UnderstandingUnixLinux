@@ -8,6 +8,7 @@
 #include	<utmp.h>
 #include	<fcntl.h>
 #include	<time.h>
+#include 	<stdlib.h>
 
 #define	SHOWHOST
 
@@ -25,7 +26,7 @@ int main()
 	}
 	while ( ( utbufp = utmp_next() ) != ((struct utmp *) NULL) )
 		show_info( utbufp );
-	utmp_close( );
+	utmp_close();
 	return 0;
 }
 /*

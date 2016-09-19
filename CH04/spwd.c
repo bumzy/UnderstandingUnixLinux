@@ -9,6 +9,8 @@
  *      bug: prints an empty string if run from "/"
  **/
 #include	<stdio.h>
+#include 	<stdlib.h>
+#include 	<string.h>
 #include	<sys/types.h>
 #include	<sys/stat.h>
 #include	<dirent.h>
@@ -73,7 +75,7 @@ void inum_to_name(ino_t inode_to_find , char *namebuf, int buflen)
 			closedir( dir_ptr );
 			return;
 		}
-	fprintf(stderr, "error looking for inum %d\n", inode_to_find);
+	fprintf(stderr, "error looking for inum %lu\n", inode_to_find);
 	exit(1);
 }
 

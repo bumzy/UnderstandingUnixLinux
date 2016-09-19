@@ -4,6 +4,7 @@
  */
 
 #include        <stdio.h>
+#include        <stdlib.h>
 #include        <termios.h>
 
 #define  oops(s,x) { perror(s); exit(x); }

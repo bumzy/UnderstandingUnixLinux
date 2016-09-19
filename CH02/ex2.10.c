@@ -3,18 +3,22 @@
  *         - formats time nicely
  */
 #include        <stdio.h>
+#include        <sys/types.h>
 #include        <unistd.h>
 #include        <utmp.h>
 #include        <fcntl.h>
 #include        <time.h>
 #include        <stdlib.h>
 
-/* #define      SHOWHOST */
+#define SHOWHOST
+#define HOSTSIZE 1024
+#define DEV_DIR_WITH_TRAILING_SLASH "/dev/"
+#define DEV_DIR_LEN (sizeof (DEV_DIR_WITH_TRAILING_SLASH) - 1)
 
 void showtime(long);
 void show_info(struct utmp *);
 
-int main()
+int main(int argc, const char *argv[])
 {
         struct utmp     utbuf;          /* read info into here */
         int             utmpfd;         /* read from this descriptor */
@@ -24,8 +28,18 @@ int main()
                 exit(1);
         }
 
-        while( read(utmpfd, &utbuf, sizeof(utbuf)) == sizeof(utbuf) )
-                show_info( &utbuf );
+        char *ttyname_b = ttyname (STDIN_FILENO);
+        if (!ttyname_b)
+                return;
+        if (strncmp (ttyname_b, DEV_DIR_WITH_TRAILING_SLASH, DEV_DIR_LEN) == 0)
+                ttyname_b += DEV_DIR_LEN;       /* Discard /dev/ prefix.  */
+
+        while( read(utmpfd, &utbuf, sizeof(utbuf)) == sizeof(utbuf) ){
+                //printf("%s %s\n", ttyname_b, utbuf.ut_line);
+                if(strncmp (ttyname_b, utbuf.ut_line, sizeof (utbuf.ut_line)) == 0){
+                        show_info( &utbuf );
+                }
+        }
         close(utmpfd);
         return 0;
 }
